@@ -227,7 +227,7 @@ static int	 guniquefd(char *, char **);
 static void	 lostconn(int);
 static void	 sigquit(int);
 static int	 receive_data(FILE *, FILE *);
-static int	 send_data(FILE *, FILE *, size_t, off_t, int);
+static int	 send_data(FILE *, FILE *, size_t, off_t, off_t, int);
 static struct passwd *
 		 sgetpwnam(char *);
 static char	*sgetsave(char *);
@@ -1713,8 +1713,8 @@ retrieve(char *cmd, char *name)
 	if (dout == NULL)
 		goto done;
 	time(&start);
-	send_data(fin, dout, st.st_blksize, st.st_size,
-		  restart_point == 0 && cmd == 0 && S_ISREG(st.st_mode));
+	send_data(fin, dout, st.st_blksize, st.st_size, restart_point,
+		  cmd == 0 && S_ISREG(st.st_mode));
 	if (cmd == 0 && guest && stats && byte_count > 0)
 		logxfer(name, byte_count, start);
 	(void) fclose(dout);
@@ -2029,7 +2029,8 @@ pdata_err:
  * NB: Form isn't handled.
  */
 static int
-send_data(FILE *instr, FILE *outstr, size_t blksize, off_t filesize, int isreg)
+send_data(FILE *instr, FILE *outstr, size_t blksize, off_t filesize,
+	  off_t offset, int isreg)
 {
 	int c, cp, filefd, netfd;
 	char *buf;
@@ -2083,18 +2084,18 @@ send_data(FILE *instr, FILE *outstr, size_t blksize, off_t filesize, int isreg)
 	case TYPE_I:
 	case TYPE_L:
 		/*
-		 * isreg is only set if we are not doing restart and we
-		 * are sending a regular file
+		 * isreg is only set if we are sending a regular file
 		 */
 		netfd = fileno(outstr);
 		filefd = fileno(instr);
 
 		if (isreg) {
 			char *msg = "Transfer complete.";
-			off_t cnt, offset;
+			off_t cnt;
 			int err;
 
-			cnt = offset = 0;
+			cnt = 0;
+			filesize -= offset;
 
 			while (filesize > 0) {
 				err = sendfile(filefd, netfd, offset, 0,
