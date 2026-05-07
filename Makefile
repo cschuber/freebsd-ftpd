@@ -21,11 +21,11 @@ SRCS+=	ls.c cmp.c print.c util.c
 CFLAGS+=-Dmain=ls_main -I${SRCTOP}/bin/ls
 LIBADD+=	m
 
-.if ${MK_BLACKLIST_SUPPORT} != "no"
-CFLAGS+= -DUSE_BLACKLIST -I${SRCTOP}/contrib/blocklist/include
+.if ${MK_BLOCKLIST_SUPPORT} != "no"
+CFLAGS+= -DUSE_BLOCKLIST -I${SRCTOP}/contrib/blocklist/include
 SRCS+= blacklist.c
 LIBADD+= blacklist
-LDFLAGS+=-L${LIBBLACKLISTDIR}
+LDFLAGS+=-L${LIBBLOCKLISTDIR}
 .endif
 
 .if ${MK_INET6_SUPPORT} != "no"

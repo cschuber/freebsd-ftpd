@@ -293,10 +293,10 @@ main(int argc, char *argv[], char **envp)
 			break;
 
 		case 'B':
-#ifdef USE_BLACKLIST
+#ifdef USE_BLOCKLIST
 			use_blacklist = 1;
 #else
-			syslog(LOG_WARNING, "not compiled with USE_BLACKLIST support");
+			syslog(LOG_WARNING, "not compiled with USE_BLOCKLIST support");
 #endif
 			break;
 
@@ -630,7 +630,7 @@ gotchild:
 		reply(220, "%s FTP server (%s) ready.", hostname, version);
 	else
 		reply(220, "FTP server ready.");
-	BLACKLIST_INIT();
+	BLOCKLIST_INIT();
 	for (;;)
 		(void) yyparse();
 	/* NOTREACHED */
@@ -1043,7 +1043,7 @@ user(char *name)
 		    (checkuser(_PATH_FTPUSERS, name, 1, NULL, &ecode) ||
 		    (ecode != 0 && ecode != ENOENT))) {
 			reply(530, "User %s access denied.", name);
-			BLACKLIST_NOTIFY(BLACKLIST_AUTH_FAIL, STDIN_FILENO, "Access denied");
+			BLOCKLIST_NOTIFY(BLOCKLIST_AUTH_FAIL, STDIN_FILENO, "Access denied");
 			if (logging)
 				syslog(LOG_NOTICE,
 				    "FTP LOGIN REFUSED FROM %s, %s",
@@ -1387,7 +1387,7 @@ skip:
 		 */
 		if (rval) {
 			reply(530, "Login incorrect.");
-			BLACKLIST_NOTIFY(BLACKLIST_AUTH_FAIL, STDIN_FILENO, "Login incorrect");
+			BLOCKLIST_NOTIFY(BLOCKLIST_AUTH_FAIL, STDIN_FILENO, "Login incorrect");
 			if (logging) {
 				syslog(LOG_NOTICE,
 				    "FTP LOGIN FAILED FROM %s",
@@ -1405,7 +1405,7 @@ skip:
 			}
 			return;
 		} else {
-			BLACKLIST_NOTIFY(BLACKLIST_AUTH_OK, STDIN_FILENO, "Login successful");
+			BLOCKLIST_NOTIFY(BLOCKLIST_AUTH_OK, STDIN_FILENO, "Login successful");
 		}
 	}
 	login_attempts = 0;		/* this time successful */
@@ -1425,7 +1425,7 @@ skip:
 				*remote_ip = 0;
 		remote_ip[sizeof(remote_ip) - 1] = 0;
 		if (!auth_hostok(lc, remotehost, remote_ip)) {
-			BLACKLIST_NOTIFY(BLACKLIST_AUTH_FAIL, STDIN_FILENO, "Permission denied");
+			BLOCKLIST_NOTIFY(BLOCKLIST_AUTH_FAIL, STDIN_FILENO, "Permission denied");
 			syslog(LOG_INFO|LOG_AUTH,
 			    "FTP LOGIN FAILED (HOST) as %s: permission denied.",
 			    pw->pw_name);
