@@ -37,11 +37,11 @@ enum {
 #endif
 
 #ifdef USE_BLOCKLIST
-void blacklist_init(void);
-void blacklist_notify(int, int, const char *);
+void blocklist_init(void);
+void blocklist_notify(int, int, const char *);
 
-#define BLOCKLIST_INIT() blacklist_init()
-#define BLOCKLIST_NOTIFY(x, y, z) blacklist_notify(x, y, z)
+#define BLOCKLIST_INIT() blocklist_init()
+#define BLOCKLIST_NOTIFY(x, y, z) blocklist_notify(x, y, z)
 
 #else
 
