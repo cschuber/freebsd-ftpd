@@ -23,8 +23,8 @@ LIBADD+=	m
 
 .if ${MK_BLOCKLIST_SUPPORT} != "no"
 CFLAGS+= -DUSE_BLOCKLIST -I${SRCTOP}/contrib/blocklist/include
-SRCS+= blacklist.c
-LIBADD+= blacklist
+SRCS+= blocklist.c
+LIBADD+= blocklist
 LDFLAGS+=-L${LIBBLOCKLISTDIR}
 .endif
 

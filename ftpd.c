@@ -77,7 +77,7 @@
 #include <security/pam_appl.h>
 #endif
 
-#include "blacklist_client.h"
+#include "blocklist_client.h"
 #include "pathnames.h"
 #include "extern.h"
 
@@ -126,7 +126,7 @@ int	noretr = 0;		/* RETR command is disabled.	*/
 int	noguestretr = 0;	/* RETR command is disabled for anon users. */
 int	noguestmkd = 0;		/* MKD command is disabled for anon users. */
 int	noguestmod = 1;		/* anon users may not modify existing files. */
-int	use_blacklist = 0;
+int	use_blocklist = 0;
 
 off_t	file_size;
 off_t	byte_count;
@@ -294,7 +294,7 @@ main(int argc, char *argv[], char **envp)
 
 		case 'B':
 #ifdef USE_BLOCKLIST
-			use_blacklist = 1;
+			use_blocklist = 1;
 #else
 			syslog(LOG_WARNING, "not compiled with USE_BLOCKLIST support");
 #endif
